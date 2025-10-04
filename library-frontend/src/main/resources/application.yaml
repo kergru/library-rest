@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: LibraryFrontend
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8085/realms/library
+          jwk-set-uri: http://localhost:8085/realms/library/protocol/openid-connect/certs
+          jws-algorithms: RS256
+
+library:
+  backend:
+    baseUrl: http://localhost:8081
+
+server:
+  port: 8080
