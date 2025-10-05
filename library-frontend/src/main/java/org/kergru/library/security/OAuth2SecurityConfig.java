@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import org.kergru.library.security.logging.JwtLoggingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,11 +28,14 @@ import reactor.core.publisher.Mono;
 public class OAuth2SecurityConfig {
 
   @Bean
-  public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+  public SecurityWebFilterChain springSecurityFilterChain(
+      ServerHttpSecurity http,
+      JwtLoggingFilter jwtLoggingFilter) {
 
     return http
         .csrf(ServerHttpSecurity.CsrfSpec::disable)
-        .cors(cors -> cors.configurationSource(corsConfigurationSource())) // <--
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .addFilterAfter(jwtLoggingFilter, SecurityWebFiltersOrder.AUTHENTICATION)
         .authorizeExchange(exchanges -> exchanges
             .pathMatchers("/actuator/**").permitAll()
             .pathMatchers("/library/ui/admin/**").hasAuthority("ROLE_LIBRARIAN")
@@ -41,7 +46,6 @@ public class OAuth2SecurityConfig {
         )
         .build();
   }
-
 
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
@@ -66,6 +70,7 @@ public class OAuth2SecurityConfig {
       Collection<GrantedAuthority> authorities = new ArrayList<>(scopesConverter.convert(jwt));
 
       Map<String, Object> realmAccess = jwt.getClaim("realm_access");
+      System.out.println("###############Realm access: " + realmAccess);
       if (realmAccess != null && realmAccess.get("roles") instanceof Collection<?> roles) {
         roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role)));
       }

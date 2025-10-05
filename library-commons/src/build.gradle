@@ -2,17 +2,12 @@ group = 'org.kergru'
 version = '0.0.1-SNAPSHOT'
 description = 'Library Commons'
 
+apply plugin: 'java-library'
+
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
-repositories {
-    mavenCentral()
-}
 
-
-tasks.named('test') {
-    useJUnitPlatform()
-}

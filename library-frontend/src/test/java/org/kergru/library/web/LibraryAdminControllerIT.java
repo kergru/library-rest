@@ -1,7 +1,6 @@
 package org.kergru.library.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.kergru.library.util.TestUtils.createMockJwt;
 import static org.kergru.library.util.TestUtils.getAccessToken;
 
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
- * Integration test for the {@link LibraryController}.
+ * Integration test for the {@link LibraryAdminController}.
  * KeyCloak is started as a container
  * Library Backend is mocked using WireMock
  * Webclient is configured to use a mock JWT
@@ -23,54 +22,62 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @AutoConfigureWireMock(port=8081)
 @Import(KeycloakTestConfig.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class LibraryControllerIT {
+public class LibraryAdminControllerIT {
 
   @Autowired
   private WebTestClient webTestClient;
 
   @Test
-  void expectListAllBooksShouldReturnBooks() {
-    String token = getAccessToken("demo_user_1", "pwd");
+  void expectListAllUsersWithRoleLibrarianShouldReturnUsers() {
+    String token = getAccessToken("librarian", "pwd");
 
     webTestClient
-        .mutateWith(createMockJwt("demo_user_1"))
         .get()
-        .uri("/library/ui/books")
-        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-        .exchange()
-        .expectStatus().isOk()
-        .expectBody(String.class)
-        .value(body -> assertThat(body).contains("The Great Gatsby"));
-  }
-
-  @Test
-  void expectShowBookByIsbnShouldReturnBook() {
-    String token = getAccessToken("demo_user_1", "pwd");
-
-    webTestClient
-        .mutateWith(createMockJwt("demo_user_1"))
-        .get()
-        .uri("/library/ui/books/12345")
-        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-        .exchange()
-        .expectStatus().isOk()
-        .expectBody(String.class)
-        .value(body -> assertThat(body).contains("The Great Gatsby"));
-  }
-
-  @Test
-  void expectShowReturnAuthenticatedUser() {
-    String token = getAccessToken("demo_user_1", "pwd");
-
-    webTestClient
-        .mutateWith(createMockJwt("demo_user_1"))
-        .get()
-        .uri("/library/ui/me")
+        .uri("/library/ui/admin/users")
         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
         .exchange()
         .expectStatus().isOk()
         .expectBody(String.class)
         .value(body -> assertThat(body).contains("demo_user_1"))
-        .value(body -> assertThat(body).contains("The Great Gatsby"));
+        .value(body -> assertThat(body).contains("demo_user_2"))
+        .value(body -> assertThat(body).contains("demo_user_3"));
+  }
+
+  @Test
+  void expectListAllUsersWithNotRoleLibrarianShouldReturnForbidden() {
+    String token = getAccessToken("demo_user_1", "pwd");
+
+    webTestClient
+        .get()
+        .uri("/library/ui/admin/users")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+        .exchange()
+        .expectStatus().isForbidden();
+  }
+
+  @Test
+  void expectGetUserWithRoleLibrarianShouldReturnUser() {
+    String token = getAccessToken("librarian", "pwd");
+
+    webTestClient
+        .get()
+        .uri("/library/ui/admin/users/demo_user_1")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(String.class)
+        .value(body -> assertThat(body).contains("demo_user_1"));
+  }
+
+  @Test
+  void expectGetUserWithNotRoleLibrarianShouldReturnForbidden() {
+    String token = getAccessToken("demo_user_1", "pwd");
+
+    webTestClient
+        .get()
+        .uri("/library/ui/admin/users/demo_user_2")
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+        .exchange()
+        .expectStatus().isForbidden();
   }
 }

@@ -58,15 +58,16 @@
   },
   "clients": [
     {
-      "clientId": "library-client-spa",
-      "name": "Library Client SPA",
+      "clientId": "library-frontend",
+      "name": "Library Client",
       "enabled": true,
       "publicClient": true,
-      "rootUrl": "http://localhost:4200/",
-      "baseUrl": "http://localhost:4200/",
+      "directAccessGrantsEnabled": true,
+      "rootUrl": "http://localhost:8080/",
+      "baseUrl": "http://localhost:8080/",
       "redirectUris": [
-        "http://localhost:4200/login/oauth2/code/keycloak",
-        "http://localhost:4200/*"
+        "http://localhost:8080/login/oauth2/code/keycloak",
+        "http://localhost:8080/*"
       ],
       "defaultClientScopes": [
         "openid",

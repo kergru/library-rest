@@ -41,7 +41,6 @@ public class OAuth2SecurityConfig {
         .build();
   }
 
-
   private Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter() {
     JwtGrantedAuthoritiesConverter scopesConverter = new JwtGrantedAuthoritiesConverter();
     scopesConverter.setAuthorityPrefix("SCOPE_"); // optional
