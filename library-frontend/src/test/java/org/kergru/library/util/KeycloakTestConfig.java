@@ -1,4 +1,4 @@
-package org.kergru.library.web;
+package org.kergru.library.util;
 
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.PortBinding;

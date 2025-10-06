@@ -1,4 +1,4 @@
-package org.kergru.library;
+package org.kergru.library.util;
 
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.mockJwt;
 

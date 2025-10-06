@@ -15,13 +15,14 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import reactor.core.publisher.Mono;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -31,20 +32,26 @@ public class OAuth2SecurityConfig {
   public SecurityWebFilterChain springSecurityFilterChain(
       ServerHttpSecurity http,
       JwtLoggingFilter jwtLoggingFilter) {
-
-    return http
-        .csrf(ServerHttpSecurity.CsrfSpec::disable)
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        .addFilterAfter(jwtLoggingFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-        .authorizeExchange(exchanges -> exchanges
-            .pathMatchers("/actuator/**").permitAll()
-            .pathMatchers("/library/ui/admin/**").hasAuthority("ROLE_LIBRARIAN")
-            .anyExchange().authenticated()
-        )
-        .oauth2ResourceServer(oauth2 -> oauth2
-            .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
-        )
-        .build();
+try {
+  return http
+      .csrf(ServerHttpSecurity.CsrfSpec::disable)
+      .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+      .addFilterAfter(jwtLoggingFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+      .authorizeExchange(exchanges -> exchanges
+          .pathMatchers("/actuator/**").permitAll()
+          .pathMatchers("/library/ui/admin/**").hasAuthority("ROLE_LIBRARIAN")
+          .anyExchange().authenticated()
+      )
+      .oauth2ResourceServer(oauth2 -> oauth2
+          .jwt(jwt -> jwt.jwtAuthenticationConverter(
+              new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter()))
+          )
+      )
+      .build();
+} catch (Exception e) {
+  e.printStackTrace();
+  throw new RuntimeException(e);
+}
   }
 
   @Bean
@@ -61,21 +68,31 @@ public class OAuth2SecurityConfig {
     return source;
   }
 
-  private Converter<Jwt, Mono<AbstractAuthenticationToken>> jwtAuthenticationConverter() {
+  @Bean
+  public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 
+    // Standard-Konverter für Scopes
     JwtGrantedAuthoritiesConverter scopesConverter = new JwtGrantedAuthoritiesConverter();
-    scopesConverter.setAuthorityPrefix("SCOPE_"); // optional
+    scopesConverter.setAuthorityPrefix("SCOPE_"); // Optional: Authority-Prefix für Scopes
 
-    return jwt -> {
+    // Setze den Converter für Scopes
+    converter.setJwtGrantedAuthoritiesConverter(scopesConverter);
+
+    // Füge die Logik für realm_access-Rollen hinzu
+    converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+      System.out.println("############### CONVERTER: " + jwt);
       Collection<GrantedAuthority> authorities = new ArrayList<>(scopesConverter.convert(jwt));
 
+      // Holen Sie sich das realm_access Claim und die Rollen
       Map<String, Object> realmAccess = jwt.getClaim("realm_access");
-      System.out.println("###############Realm access: " + realmAccess);
       if (realmAccess != null && realmAccess.get("roles") instanceof Collection<?> roles) {
         roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role)));
       }
 
-      return Mono.just(new JwtAuthenticationToken(jwt, authorities));
-    };
+      return authorities;
+    });
+
+    return converter;
   }
 }

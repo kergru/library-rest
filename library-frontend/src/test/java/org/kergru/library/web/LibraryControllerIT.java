@@ -1,27 +1,23 @@
 package org.kergru.library.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.kergru.library.util.TestUtils.createMockJwt;
-import static org.kergru.library.util.TestUtils.getAccessToken;
+import static org.kergru.library.util.JwtTestUtils.createMockJwt;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
  * Integration test for the {@link LibraryController}.
- * KeyCloak is started as a container
+ * KeyCloak is mocked using mockJwt(), no KeyCloak container required
  * Library Backend is mocked using WireMock
  * Webclient is configured to use a mock JWT
  */
 @AutoConfigureWebTestClient
 @AutoConfigureWireMock(port=8081)
-@Import(KeycloakTestConfig.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class LibraryControllerIT {
 
@@ -30,13 +26,11 @@ public class LibraryControllerIT {
 
   @Test
   void expectListAllBooksShouldReturnBooks() {
-    String token = getAccessToken("demo_user_1", "pwd");
 
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
         .uri("/library/ui/books")
-        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
         .exchange()
         .expectStatus().isOk()
         .expectBody(String.class)
@@ -45,13 +39,11 @@ public class LibraryControllerIT {
 
   @Test
   void expectShowBookByIsbnShouldReturnBook() {
-    String token = getAccessToken("demo_user_1", "pwd");
 
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
         .uri("/library/ui/books/12345")
-        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
         .exchange()
         .expectStatus().isOk()
         .expectBody(String.class)
@@ -60,13 +52,11 @@ public class LibraryControllerIT {
 
   @Test
   void expectShowReturnAuthenticatedUser() {
-    String token = getAccessToken("demo_user_1", "pwd");
 
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
         .uri("/library/ui/me")
-        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
         .exchange()
         .expectStatus().isOk()
         .expectBody(String.class)

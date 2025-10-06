@@ -31,7 +31,6 @@ dependencies {
     testImplementation 'com.github.dasniko:testcontainers-keycloak:3.8.0'
 
     // WireMock
-   // testImplementation 'org.wiremock:wiremock-standalone:3.0.0' //without servlet api
     testImplementation "org.springframework.cloud:spring-cloud-contract-wiremock"
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
