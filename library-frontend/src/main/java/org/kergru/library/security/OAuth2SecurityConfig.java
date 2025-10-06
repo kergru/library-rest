@@ -81,7 +81,6 @@ try {
 
     // Füge die Logik für realm_access-Rollen hinzu
     converter.setJwtGrantedAuthoritiesConverter(jwt -> {
-      System.out.println("############### CONVERTER: " + jwt);
       Collection<GrantedAuthority> authorities = new ArrayList<>(scopesConverter.convert(jwt));
 
       // Holen Sie sich das realm_access Claim und die Rollen
