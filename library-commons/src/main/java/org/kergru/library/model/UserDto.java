@@ -9,4 +9,5 @@ public record UserDto(
     String email,
     List<LoanDto> loans
 ) {
+
 }

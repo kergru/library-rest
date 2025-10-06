@@ -12,13 +12,11 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
- * Integration test for the {@link LibraryAdminController}.
- * KeyCloak is mocked using mockJwt(), no KeyCloak container required
- * Library Backend is mocked using WireMock
- * Webclient is configured to use a mock JWT
+ * Integration test for the {@link LibraryAdminController}. KeyCloak is mocked using mockJwt(), no KeyCloak container required Library Backend is mocked using WireMock Webclient is
+ * configured to use a mock JWT
  */
 @AutoConfigureWebTestClient
-@AutoConfigureWireMock(port=8081)
+@AutoConfigureWireMock(port = 8081)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class LibraryAdminControllerIT {
 
@@ -46,7 +44,7 @@ public class LibraryAdminControllerIT {
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
-        .uri("/library/ui/admin/users")
+        .uri("/library/ui/admin/users") //protected route without role librarian
         .exchange()
         .expectStatus().isForbidden();
   }
@@ -57,7 +55,7 @@ public class LibraryAdminControllerIT {
     webTestClient
         .mutateWith(createMockJwtWithRoleLibrarian("librarian"))
         .get()
-        .uri("/library/ui/admin/users/demo_user_1")
+        .uri("/library/ui/admin/users/demo_user_1") //protected route without role librarian
         .exchange()
         .expectStatus().isOk()
         .expectBody(String.class)

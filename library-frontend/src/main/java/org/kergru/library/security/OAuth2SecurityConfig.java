@@ -7,16 +7,12 @@ import java.util.Map;
 import org.kergru.library.security.logging.JwtLoggingFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -32,34 +28,29 @@ public class OAuth2SecurityConfig {
   public SecurityWebFilterChain springSecurityFilterChain(
       ServerHttpSecurity http,
       JwtLoggingFilter jwtLoggingFilter) {
-try {
-  return http
-      .csrf(ServerHttpSecurity.CsrfSpec::disable)
-      .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-      .addFilterAfter(jwtLoggingFilter, SecurityWebFiltersOrder.AUTHENTICATION)
-      .authorizeExchange(exchanges -> exchanges
-          .pathMatchers("/actuator/**").permitAll()
-          .pathMatchers("/library/ui/admin/**").hasAuthority("ROLE_LIBRARIAN")
-          .anyExchange().authenticated()
-      )
-      .oauth2ResourceServer(oauth2 -> oauth2
-          .jwt(jwt -> jwt.jwtAuthenticationConverter(
-              new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter()))
-          )
-      )
-      .build();
-} catch (Exception e) {
-  e.printStackTrace();
-  throw new RuntimeException(e);
-}
+
+    return http
+        .csrf(ServerHttpSecurity.CsrfSpec::disable)
+        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .addFilterAfter(jwtLoggingFilter, SecurityWebFiltersOrder.AUTHENTICATION)
+        .authorizeExchange(exchanges -> exchanges
+            .pathMatchers("/actuator/**").permitAll()
+            .pathMatchers("/library/ui/admin/**").hasAuthority("ROLE_LIBRARIAN")
+            .anyExchange().authenticated()
+        )
+        .oauth2ResourceServer(oauth2 -> oauth2
+            .jwt(jwt -> jwt.jwtAuthenticationConverter(
+                new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter()))
+            )
+        )
+        .build();
   }
 
-  @Bean
-  public CorsConfigurationSource corsConfigurationSource() {
+  private CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
     config.setAllowedOrigins(List.of("http://localhost:4200")); // Library client SPA
-    config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
-    config.setAllowedHeaders(List.of("Authorization","Content-Type"));
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedHeaders(List.of("Authorization", "Content-Type"));
     config.setExposedHeaders(List.of("Authorization"));
     config.setAllowCredentials(true);
 
@@ -68,8 +59,7 @@ try {
     return source;
   }
 
-  @Bean
-  public JwtAuthenticationConverter jwtAuthenticationConverter() {
+  private JwtAuthenticationConverter jwtAuthenticationConverter() {
     JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 
     // Standard-Konverter für Scopes

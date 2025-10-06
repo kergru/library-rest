@@ -21,8 +21,7 @@ public class LibraryBackendClient {
   }
 
   /**
-   * Retrieves all books from the backend.
-   * Using the token relay pattern.
+   * Retrieves all books from the backend. Using the token relay pattern.
    */
   public Flux<BookDto> getAllBooks() {
     return webClient.get()
@@ -35,8 +34,7 @@ public class LibraryBackendClient {
   }
 
   /**
-   * Retrieves a single book by its ISBN from the backend.
-   * Using the client credentials pattern.
+   * Retrieves a single book by its ISBN from the backend. Using the client credentials pattern.
    */
   public Mono<BookDto> getBookByIsbn(String isbn) {
     return webClient.get()

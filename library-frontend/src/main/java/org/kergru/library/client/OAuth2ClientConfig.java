@@ -12,12 +12,11 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
- * Configuration for OAuth2 client, appends JWT token to Authorization header.
- * Used for WebClient to call backend services and when the token is only passed from iE external SPA.
+ * Configuration for OAuth2 client, appends JWT token to Authorization header. Used for WebClient to call backend services and when the token is only passed from iE external SPA.
  * No token refresh is required here, handled by external SPA.
  */
 @Configuration
-public class  OAuth2ClientConfig {
+public class OAuth2ClientConfig {
 
   private static final Logger logger = LoggerFactory.getLogger(OAuth2ClientConfig.class);
 

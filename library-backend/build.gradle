@@ -21,8 +21,6 @@ dependencies {
     testImplementation 'org.testcontainers:junit-jupiter'
     //MySQL
     testImplementation 'org.testcontainers:mysql'
-    //KeyCloak
-    testImplementation "com.github.dasniko:testcontainers-keycloak:3.4.0"
 
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     runtimeOnly 'com.mysql:mysql-connector-j'
