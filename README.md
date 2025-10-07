@@ -37,57 +37,24 @@ An external Angular SPA (library-client-spa) authenticates users and calls the l
 |                      | **Web / REST API**      | `@RestController`, JSON only                                                                 | Exposes protected REST endpoints                     |
 |                      | **Data Layer**          | `ReactiveCrudRepository`, `@Service`                                                         | Reactive persistence via R2DBC                       |
 
-## Flow
 
-```mermaid
-flowchart TB
-    subgraph SPA["🧭 library-client-spa (Angular + OIDC Client + PKCE)"]
-        C1["Login with Keycloak"]
-        C2["Store Access Token (JWT)"]
-        C3["Call /api/books on library-frontend with Bearer Token"]
-    end
-
-    subgraph FRONTEND["💻 library-frontend (Reactive OAuth2 Resource Server)"]
-        F1["SecurityWebFilterChain + oauth2ResourceServer().jwt()"]
-        F2["Validate JWT"]
-        F3["Forward request via WebClient -> library-backend (Bearer Token)"]
-        F4["Return JSON Response"]
-    end
-
-    subgraph BACKEND["⚙️ library-backend (Reactive OAuth2 Resource Server)"]
-        B1["Validate JWT via JWKS"]
-        B2["Reactive Business Logic / DB Access"]
-        B3["Return JSON Data"]
-    end
-
-    subgraph AUTH["🛡️ Authorization Server (Keycloak)"]
-        A1["/token (issues JWT)"]
-        A2["/.well-known/jwks.json (JWKS keys)"]
-    end
-
-    C1 -->|"Authorization Code Flow + PKCE"| AUTH
-    C2 -->|"Access Token (JWT)"| FRONTEND
-    FRONTEND -->|"Forward Bearer Token"| BACKEND
-    BACKEND -->|"Validate JWT"| AUTH
-    BACKEND -->|"JSON Response"| FRONTEND
-    FRONTEND -->|"JSON Response"| SPA
-
-```
 
 ## Architecture
 
 ```mermaid
-flowchart TB
+flowchart BT
     subgraph SPA["🧭 Angular SPA – library-client-spa"]
         SPA1["Login via OIDC + PKCE"]
         SPA2["Store Access Token"]
         SPA3["Call REST APIs on library-frontend"]
+        SPA4["Request User Info from OIDC Endpoint"]
     end
 
     subgraph FRONTEND["💻 library-frontend (Reactive Resource Server + Gateway)"]
         FE1["Validate JWT"]
         FE2["Forward Request to library-backend (Bearer Token)"]
         FE3["Return JSON to SPA"]
+        FE4["Request User Info from OIDC Endpoint"]
     end
 
     subgraph BACKEND["⚙️ library-backend (Reactive Resource Server)"]
@@ -99,12 +66,17 @@ flowchart TB
     subgraph AUTH["🛡️ Keycloak (Authorization Server)"]
         AS1["/authorize + /token"]
         AS2["JWKS Endpoint"]
+        AS3["/userinfo (User Info Endpoint)"]
     end
 
+    SPA -->|"Authorization Code"| AUTH
     SPA -->|"Bearer Token"| FRONTEND
     FRONTEND -->|"Bearer Token"| BACKEND
+    FRONTEND -->|"Validate JWT via JWKS"| AUTH
+    FRONTEND -->|"Request User Info"| AUTH
     BACKEND -->|"Validate via JWKS"| AUTH
     BACKEND -->|"JSON"| FRONTEND
     FRONTEND -->|"JSON"| SPA
+    SPA -->|"User Info"| AUTH
 
 ```

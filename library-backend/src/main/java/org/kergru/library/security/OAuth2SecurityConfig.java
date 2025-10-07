@@ -29,7 +29,7 @@ public class OAuth2SecurityConfig {
       JwtLoggingFilter jwtLoggingFilter) {
 
     return http
-        .csrf(ServerHttpSecurity.CsrfSpec::disable)
+        .csrf(ServerHttpSecurity.CsrfSpec::disable) // CSRF protection is not needed for a resource server, token secured
         .addFilterAfter(jwtLoggingFilter, SecurityWebFiltersOrder.AUTHENTICATION)
         .authorizeExchange(exchange -> exchange
             .pathMatchers("/actuator/**").permitAll()

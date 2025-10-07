@@ -30,8 +30,8 @@ public class OAuth2SecurityConfig {
       JwtLoggingFilter jwtLoggingFilter) {
 
     return http
-        .csrf(ServerHttpSecurity.CsrfSpec::disable)
-        .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+        .csrf(ServerHttpSecurity.CsrfSpec::disable) // CSRF protection is not needed for a resource server, token secured
+        .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS is needed for the frontend to call the backend
         .addFilterAfter(jwtLoggingFilter, SecurityWebFiltersOrder.AUTHENTICATION)
         .authorizeExchange(exchanges -> exchanges
             .pathMatchers("/actuator/**").permitAll()
