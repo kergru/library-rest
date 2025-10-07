@@ -39,7 +39,7 @@ An external Angular SPA (library-client-spa) authenticates users and calls the l
 
 
 
-## Architecture
+## Architecture / Flow Diagram
 
 ```mermaid
 flowchart BT
