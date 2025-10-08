@@ -1,6 +1,4 @@
-group = 'org.kergru'
-version = '0.0.1-SNAPSHOT'
-description = 'Reactive Library RestController'
+description = 'Reactive Library Frontend (Resource Server)'
 
 apply plugin: 'org.springframework.boot'
 
@@ -9,11 +7,9 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
-    // OAuth2 Client für library-backend resourceserver requests
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    // Resource Server (prüft JWT-Token)
+    // Resource Server (JWT-Token validation)
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-    // Für JWT-Support (Signaturprüfung via JWKs)
+    // JWT-Support (JWT-Signature validation via JWKs)
     implementation 'org.springframework.security:spring-security-oauth2-jose'
 
     // Test dependencies

@@ -21,7 +21,8 @@ public class LibraryBackendClient {
   }
 
   /**
-   * Retrieves all books from the backend. Using the token relay pattern.
+   * Retrieves all books from the backend.
+   * Using the token relay pattern.
    */
   public Flux<BookDto> getAllBooks() {
     return webClient.get()
@@ -34,7 +35,8 @@ public class LibraryBackendClient {
   }
 
   /**
-   * Retrieves a single book by its ISBN from the backend. Using the client credentials pattern.
+   * Retrieves a single book by its ISBN from the backend.
+   * Using the client credentials pattern.
    */
   public Mono<BookDto> getBookByIsbn(String isbn) {
     return webClient.get()
@@ -57,21 +59,9 @@ public class LibraryBackendClient {
   }
 
   public Mono<UserDto> getUser(String userName) {
-//    return webClient.get()
-//        .uri("/library/api/users/{userName}", userName)
-//        .retrieve()
-//        .onStatus(s -> s.value() == 404, resp -> reactor.core.publisher.Mono.empty())
-//        .onStatus(s -> s.is4xxClientError() || s.is5xxServerError(),
-//            ClientResponse::createException)
-//        .bodyToMono(UserDto.class)
-//        .map(u -> {
-//          System.out.println("user backendclient: " + u);
-//          return u;
-//        });
     return webClient.get()
         .uri("/library/api/users/{userName}", "demo_user_1")
         .exchangeToMono(response -> response.bodyToMono(String.class)
-            .doOnNext(body -> System.out.println("Raw JSON: " + body))
             .flatMap(body -> {
               try {
                 return Mono.justOrEmpty(

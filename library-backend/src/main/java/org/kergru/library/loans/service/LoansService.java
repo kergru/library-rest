@@ -26,8 +26,7 @@ public class LoansService {
     return userRepository.findByUsername(userName)
         .switchIfEmpty(Mono.error(new NoSuchElementException("User not found")))
         .flatMapMany(u -> loanRepository.findByUserIdWithBook(u.id))
-        .map(this::toDto)
-        .doOnError(err -> System.err.println("Error in findBorrowedByUser: " + err.getMessage()));
+        .map(this::toDto);
   }
 
   private LoanDto toDto(LoanWithBookDto e) {

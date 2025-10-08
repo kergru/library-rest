@@ -43,9 +43,8 @@ public class LibraryService {
    */
   public Mono<UserDto> getUserWithLoans(String userName) {
     return getUser(userName)
-        .flatMap(user -> {
-              System.out.println("user: " + user);
-              return getBorrowedBooksOfUser(userName)
+        .flatMap(user ->
+              getBorrowedBooksOfUser(userName)
                   .collectList()
                   .map(loans -> new UserDto(
                       user.userName(),
@@ -53,13 +52,7 @@ public class LibraryService {
                       user.lastName(),
                       user.email(),
                       loans
-                  ));
-            }
-        )
-        .map(u -> {
-          System.out.println(u);
-          return u;
-        });
+                  )));
   }
 
   /**
