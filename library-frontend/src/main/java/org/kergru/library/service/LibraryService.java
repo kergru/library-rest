@@ -3,6 +3,7 @@ package org.kergru.library.service;
 import org.kergru.library.client.LibraryBackendClient;
 import org.kergru.library.model.BookDto;
 import org.kergru.library.model.LoanDto;
+import org.kergru.library.model.PageResponseDto;
 import org.kergru.library.model.UserDto;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -17,30 +18,19 @@ public class LibraryService {
     this.backendClient = oauth2WebClient;
   }
 
-  /**
-   * Retrieves all books from the backend. Using the token relay pattern.
-   */
-  public Flux<BookDto> getAllBooks() {
-    return backendClient.getAllBooks();
+  public Mono<PageResponseDto<BookDto>> getBooks(String searchString, int page, int size, String sortBy) {
+    return backendClient.getBooks(searchString, page, size, sortBy);
   }
 
-  /**
-   * Retrieves a single book by its ISBN from the backend. Using the token relay pattern.
-   */
   public Mono<BookDto> getBookByIsbn(String isbn) {
     return backendClient.getBookByIsbn(isbn);
   }
 
-  /**
-   * Retrieves all users. Using the token relay pattern.
-   */
-  public Flux<UserDto> getAllUsers() {
-    return backendClient.getAllUsers();
+  public Mono<PageResponseDto<UserDto>> getUsers(String searchString, int page, int size, String sortBy) {
+    return backendClient.getUsers(searchString, page, size, sortBy)
+        .onErrorContinue((throwable, o) -> throwable.printStackTrace());
   }
 
-  /**
-   * Retrieves a single user with his loans. Using the token relay pattern.
-   */
   public Mono<UserDto> getUserWithLoans(String userName) {
     return getUser(userName)
         .flatMap(user ->
@@ -55,16 +45,10 @@ public class LibraryService {
                   )));
   }
 
-  /**
-   * Retrieves a single user by userName. Using the token relay pattern.
-   */
   public Mono<UserDto> getUser(String userName) {
     return backendClient.getUser(userName);
   }
 
-  /**
-   * Retrieves borrowed books by user Using the token relay pattern. Endpoint is only available for librarians or the user himself.
-   */
   public Flux<LoanDto> getBorrowedBooksOfUser(String userId) {
     return backendClient.getBorrowedBooksOfUser(userId);
   }

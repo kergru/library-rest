@@ -3,7 +3,7 @@ package org.kergru.library.users.repository;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Mono;
 
-public interface UserRepository extends ReactiveCrudRepository<UserEntity, Long> {
+public interface UserRepository extends ReactiveCrudRepository<UserEntity, Long>, UserCustomRepository {
 
   Mono<UserEntity> findByUsername(String username);
 }
