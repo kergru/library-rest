@@ -5,8 +5,6 @@ import static org.kergru.library.JwtTestUtils.createMockJwt;
 import static org.kergru.library.JwtTestUtils.createMockJwtWithRoleLibrarian;
 
 import java.time.Duration;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kergru.library.model.PageResponseDto;
 import org.kergru.library.model.UserDto;
@@ -20,6 +18,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.containers.MySQLR2DBCDatabaseContainer;
+import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.MountableFile;
 
@@ -32,28 +31,18 @@ import org.testcontainers.utility.MountableFile;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 class LibraryBackendApplicationTests {
 
-  private static MySQLContainer<?> mysqlContainer;
-  private static MySQLR2DBCDatabaseContainer r2dbcContainer;
+  private static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0")
+      .withDatabaseName("library")
+      .withUsername("admin")
+      .withPassword("pwd")
+      .withCopyFileToContainer(
+          MountableFile.forHostPath("../docker/mysql-init/library_schema.sql"),
+          "/docker-entrypoint-initdb.d/library_schema.sql"
+      )
+      .withStartupTimeout(Duration.ofMinutes(2));
 
-  @BeforeAll
-  static void beforeAll() {
-    mysqlContainer = new MySQLContainer<>("mysql:8.0")
-        .withDatabaseName("library")
-        .withUsername("admin")
-        .withPassword("pwd")
-        .withCopyFileToContainer(
-            MountableFile.forHostPath("../docker/mysql-init/library_schema.sql"),
-            "/docker-entrypoint-initdb.d/library_schema.sql"
-        )
-        .withStartupTimeout(Duration.ofMinutes(2));
-    r2dbcContainer = new MySQLR2DBCDatabaseContainer(mysqlContainer);
-    r2dbcContainer.start();
-  }
-
-  @AfterAll
-  static void afterAll() {
-    r2dbcContainer.close();
-  }
+  @Container
+  private static final MySQLR2DBCDatabaseContainer r2dbcContainer = new MySQLR2DBCDatabaseContainer(mysqlContainer);
 
   @DynamicPropertySource
   static void registerProperties(DynamicPropertyRegistry registry) {

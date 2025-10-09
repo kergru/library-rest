@@ -18,17 +18,16 @@ public class LibraryService {
     this.backendClient = oauth2WebClient;
   }
 
-  public Mono<PageResponseDto<BookDto>> getBooks(String searchString, int page, int size, String sortBy) {
-    return backendClient.getBooks(searchString, page, size, sortBy);
+  public Mono<PageResponseDto<BookDto>> searchBooks(String searchString, int page, int size, String sortBy) {
+    return backendClient.searchBooks(searchString, page, size, sortBy);
   }
 
   public Mono<BookDto> getBookByIsbn(String isbn) {
     return backendClient.getBookByIsbn(isbn);
   }
 
-  public Mono<PageResponseDto<UserDto>> getUsers(String searchString, int page, int size, String sortBy) {
-    return backendClient.getUsers(searchString, page, size, sortBy)
-        .onErrorContinue((throwable, o) -> throwable.printStackTrace());
+  public Mono<PageResponseDto<UserDto>> searchUsers(String searchString, int page, int size, String sortBy) {
+    return backendClient.searchUsers(searchString, page, size, sortBy);
   }
 
   public Mono<UserDto> getUserWithLoans(String userName) {

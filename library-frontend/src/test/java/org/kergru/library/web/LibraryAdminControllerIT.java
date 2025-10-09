@@ -24,7 +24,7 @@ public class LibraryAdminControllerIT {
   private WebTestClient webTestClient;
 
   @Test
-  void expectGetUsersWithRoleLibrarianShouldReturnUsers() {
+  void expectSearchUsersWithRoleLibrarianShouldReturnUsers() {
 
     webTestClient
         .mutateWith(createMockJwtWithRoleLibrarian("librarian"))
@@ -39,7 +39,7 @@ public class LibraryAdminControllerIT {
   }
 
   @Test
-  void expectGetUsersWithNotRoleLibrarianShouldReturnForbidden() {
+  void expectSearchUsersWithNotRoleLibrarianShouldReturnForbidden() {
 
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))

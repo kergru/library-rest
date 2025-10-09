@@ -23,7 +23,7 @@ public class LibraryControllerIT {
   private WebTestClient webTestClient;
 
   @Test
-  void expectGetBooksShouldReturnBooks() {
+  void expectSearchBooksShouldReturnBooks() {
 
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
@@ -36,7 +36,7 @@ public class LibraryControllerIT {
   }
 
   @Test
-  void expectShowBookByIsbnShouldReturnBook() {
+  void expectGetBookByIsbnShouldReturnBook() {
 
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
@@ -49,7 +49,7 @@ public class LibraryControllerIT {
   }
 
   @Test
-  void expectShowReturnAuthenticatedUser() {
+  void expectGetMeShouldReturnAuthenticatedUser() {
 
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))

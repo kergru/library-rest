@@ -35,13 +35,13 @@ public class LibraryController {
   }
 
   @GetMapping("/books")
-  public Mono<PageResponseDto<BookDto>> getBooks(
+  public Mono<PageResponseDto<BookDto>> searchBooks(
       @RequestParam(required = false) String searchString,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size,
       @RequestParam(defaultValue = "title") String sortBy
   ) {
-    return libraryService.getBooks(searchString, page, size, sortBy);
+    return libraryService.searchBooks(searchString, page, size, sortBy);
   }
 
   @GetMapping("/books/{isbn}")

@@ -23,13 +23,13 @@ public class LibraryAdminController {
   }
 
   @GetMapping("/users")
-  public Mono<PageResponseDto<UserDto>> getUsers(
+  public Mono<PageResponseDto<UserDto>> searchUsers(
       @RequestParam(required = false) String searchString,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size,
       @RequestParam(defaultValue = "firstName") String sortBy
   ) {
-    return libraryService.getUsers(searchString, page, size, sortBy);
+    return libraryService.searchUsers(searchString, page, size, sortBy);
   }
 
   @GetMapping("/users/{userName}")

@@ -24,7 +24,7 @@ public class LibraryBackendClient {
    * Retrieves all books from the backend by given search criteria.
    * Using the token relay pattern.
    */
-  public Mono<PageResponseDto<BookDto>> getBooks(String searchString, int page, int size, String sortBy) {
+  public Mono<PageResponseDto<BookDto>> searchBooks(String searchString, int page, int size, String sortBy) {
     return webClient.get()
         .uri(uriBuilder -> {
           var builder = uriBuilder
@@ -63,7 +63,7 @@ public class LibraryBackendClient {
    * Retrieves all users from the backend.
    * Using the token relay pattern.
    */
-  public Mono<PageResponseDto<UserDto>> getUsers(String searchString, int page, int size, String sortBy) {
+  public Mono<PageResponseDto<UserDto>> searchUsers(String searchString, int page, int size, String sortBy) {
     return webClient.get()
         .uri(uriBuilder -> {
           var builder = uriBuilder
