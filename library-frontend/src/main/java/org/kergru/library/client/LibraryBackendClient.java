@@ -42,7 +42,7 @@ public class LibraryBackendClient {
             status -> status.is4xxClientError() || status.is5xxServerError(),
             ClientResponse::createException
         )
-        .bodyToMono(new ParameterizedTypeReference<PageResponseDto<BookDto>>() {});
+        .bodyToMono(new ParameterizedTypeReference<>() {});
   }
 
   /**
@@ -81,7 +81,7 @@ public class LibraryBackendClient {
             status -> status.is4xxClientError() || status.is5xxServerError(),
             ClientResponse::createException
         )
-        .bodyToMono(new ParameterizedTypeReference<PageResponseDto<UserDto>>() {});
+        .bodyToMono(new ParameterizedTypeReference<>() {});
   }
 
   /**
