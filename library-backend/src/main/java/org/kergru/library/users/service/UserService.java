@@ -1,7 +1,6 @@
 package org.kergru.library.users.service;
 
 import java.util.stream.Collectors;
-import org.kergru.library.books.service.BookService;
 import org.kergru.library.model.PageResponseDto;
 import org.kergru.library.model.UserDto;
 import org.kergru.library.users.repository.UserEntity;
