@@ -2,7 +2,7 @@ package org.kergru.library.books.service;
 
 import java.util.stream.Collectors;
 import org.kergru.library.books.repository.BookRepository;
-import org.kergru.library.books.repository.BookWithLoanDto;
+import org.kergru.library.books.repository.BookWithLoanProjection;
 import org.kergru.library.model.BookDto;
 import org.kergru.library.model.LoanStatusDto;
 import org.kergru.library.model.PageResponseDto;
@@ -20,7 +20,7 @@ public class BookService {
 
   public Mono<PageResponseDto<BookDto>> searchBooks(String searchStr, int page, int size, String sortBy) {
 
-    return bookRepository.searchBooks(searchStr, page, size, sortBy)
+    return bookRepository.searchBooksPaged(searchStr, page, size, sortBy)
         .map(p -> new PageResponseDto<>(
             p.getContent().stream().map(this::toDto).collect(Collectors.toList()),
             p.getNumber(),
@@ -35,10 +35,10 @@ public class BookService {
   }
 
   public Mono<BookDto> findByIsbn(String isbn) {
-    return bookRepository.findByIsbnWithLoan(isbn).map(this::toDto);
+    return bookRepository.findByIsbn(isbn).map(this::toDto);
   }
 
-  private BookDto toDto(BookWithLoanDto b) {
+  private BookDto toDto(BookWithLoanProjection b) {
 
     return new BookDto(
         b.getIsbn(),

@@ -23,7 +23,7 @@ public class UserService {
 
   public Mono<PageResponseDto<UserDto>> searchUsers(String searchString, int page, int size, String sortBy) {
 
-    return repository.searchUsers(searchString, page, size, sortBy)
+    return repository.searchUsersPaged(searchString, page, size, sortBy)
         .map(p -> new PageResponseDto<>(
             p.getContent().stream().map(this::toDto).collect(Collectors.toList()),
             p.getNumber(),

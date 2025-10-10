@@ -2,7 +2,7 @@ package org.kergru.library.loans.service;
 
 import java.util.NoSuchElementException;
 import org.kergru.library.loans.repository.LoanRepository;
-import org.kergru.library.loans.repository.LoanWithBookDto;
+import org.kergru.library.loans.repository.LoanWithBookProjection;
 import org.kergru.library.model.BookDto;
 import org.kergru.library.model.LoanDto;
 import org.kergru.library.users.repository.UserRepository;
@@ -29,7 +29,7 @@ public class LoansService {
         .map(this::toDto);
   }
 
-  private LoanDto toDto(LoanWithBookDto e) {
+  private LoanDto toDto(LoanWithBookProjection e) {
     return new LoanDto(
         new BookDto(
             e.getIsbn(),
