@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
 
 /**
- * WebClient configuration with OAuth2 and logging interceptors.
+ * WebClient configuration with OAuth2 token relay and logging interceptors.
  */
 @Configuration
 public class OAuth2WebClientConfig {
@@ -33,9 +33,10 @@ public class OAuth2WebClientConfig {
   }
 
   /**
-   * Gets the access token from the security context and adds it to the request headers.
+   * Filter that gets the access token from the security context and adds it to the request headers.
    */
-    private ExchangeFilterFunction tokenRelayFilter() {
+  private ExchangeFilterFunction tokenRelayFilter() {
+
     return (request, next) -> ReactiveSecurityContextHolder.getContext()
         .map(SecurityContext::getAuthentication)
         .cast(JwtAuthenticationToken.class)

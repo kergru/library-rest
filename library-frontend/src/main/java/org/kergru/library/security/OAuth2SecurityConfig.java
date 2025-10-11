@@ -20,6 +20,15 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+/**
+ * Security configuration for OAuth2 resource server.
+ * It:
+ * - Disables CSRF protection
+ * - Enables CORS
+ * - Adds JWT logging filter
+ * - Configures authorization rules
+ * - Configures JWT authentication converter
+ */
 @Configuration
 @EnableWebFluxSecurity
 public class OAuth2SecurityConfig {
@@ -62,18 +71,15 @@ public class OAuth2SecurityConfig {
   private JwtAuthenticationConverter jwtAuthenticationConverter() {
     JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
 
-    // Standard-Konverter für Scopes
+    // Standard converter for Scopes
     JwtGrantedAuthoritiesConverter scopesConverter = new JwtGrantedAuthoritiesConverter();
     scopesConverter.setAuthorityPrefix("SCOPE_"); // Optional: Authority-Prefix für Scopes
-
-    // Setze den Converter für Scopes
     converter.setJwtGrantedAuthoritiesConverter(scopesConverter);
 
-    // Füge die Logik für realm_access-Rollen hinzu
+    // Maps realm_access roles to authorities
     converter.setJwtGrantedAuthoritiesConverter(jwt -> {
       Collection<GrantedAuthority> authorities = new ArrayList<>(scopesConverter.convert(jwt));
 
-      // Holen Sie sich das realm_access Claim und die Rollen
       Map<String, Object> realmAccess = jwt.getClaim("realm_access");
       if (realmAccess != null && realmAccess.get("roles") instanceof Collection<?> roles) {
         roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role)));

@@ -12,6 +12,10 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+/**
+ * Logging filter for JWT tokens.
+ * It logs the JWT token claims and the authorization header.
+ */
 @Component
 public class JwtLoggingFilter implements WebFilter {
 
@@ -27,14 +31,12 @@ public class JwtLoggingFilter implements WebFilter {
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
     System.out.println("Incoming request: " + exchange.getRequest().getURI());
 
-    // Headers loggen
     exchange.getRequest().getHeaders().forEach((name, values) -> {
       if ("authorization".equalsIgnoreCase(name)) {
         System.out.println("Authorization header - " + name + ": " + values);
       }
     });
 
-    // JWT Claims loggen
     return ReactiveSecurityContextHolder.getContext()
         .flatMap(securityContext -> {
           var authentication = securityContext.getAuthentication();
@@ -50,6 +52,6 @@ public class JwtLoggingFilter implements WebFilter {
           }
           return Mono.empty();
         })
-        .then(chain.filter(exchange)); // request weiterleiten
+        .then(chain.filter(exchange));
   }
 }
