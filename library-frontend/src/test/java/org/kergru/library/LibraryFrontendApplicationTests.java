@@ -8,6 +8,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 @SpringBootTest
 class LibraryFrontendApplicationTests {
 
+  /**
+   * Mocks the JwtDecoder bean to avoid dependency on KeyCloak
+   */
   @MockitoBean
   private JwtDecoder jwtDecoder;
 
