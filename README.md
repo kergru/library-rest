@@ -39,7 +39,7 @@ An external Angular SPA (library-client-spa) authenticates users and calls the l
 
 
 
-## Architecture / Flow Diagram
+## Architecture Diagram
 
 ```mermaid
 flowchart BT
@@ -78,5 +78,46 @@ flowchart BT
     BACKEND -->|"JSON"| FRONTEND
     FRONTEND -->|"JSON"| SPA
     SPA -->|"User Info"| AUTH
+```
 
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+participant A as Angular SPA
+participant F as Frontend Service (Spring WebFlux)
+participant K as Keycloak
+participant B as Backend Service
+
+    rect rgb(240, 248, 255)
+    note over A: 1. User Login
+    A->>K: Redirect to Keycloak Login
+    K-->>A: Authentication Form
+    A->>K: Submit Credentials
+    K-->>A: Redirect with Authorization Code
+    A->>K: Exchange Code for Tokens
+    K-->>A: ID Token + Access Token
+    end
+
+    rect rgb(255, 240, 245)
+    note over A,F: 2. Access Protected Resource
+    A->>F: Request /api/resource (with Bearer Token)
+    F->>K: Validate Token (JWT)
+    K-->>F: Token Validation Response
+    F->>B: Forward Request (with same Bearer Token)
+    B->>K: Validate Token (JWT)
+    K-->>B: Token Validation Response
+    B-->>F: Resource Data
+    F-->>A: Resource Data
+    end
+
+    rect rgb(230, 255, 230)
+        note over A,B: 3. Token Relay Flow
+        A->>F: Request with Bearer Token
+        F->>F: Extract Token from SecurityContext
+        F->>B: Forward Request with same Token
+        B->>B: Validate Token & Extract Roles
+        B-->>F: Response with Data
+        F-->>A: Forward Response
+    end
 ```
