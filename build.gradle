@@ -33,7 +33,7 @@ subprojects {
         }
     }
 
-    // Testkonfiguration – zuverlässig alle Tests finden
+
     tasks.withType(Test).configureEach {
         useJUnitPlatform()  // JUnit 5
         outputs.upToDateWhen { false } // Test Cache umgehen, damit Tests immer gefunden werden

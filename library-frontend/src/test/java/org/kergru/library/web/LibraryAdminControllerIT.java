@@ -5,10 +5,13 @@ import static org.kergru.library.util.JwtTestUtils.createMockJwt;
 import static org.kergru.library.util.JwtTestUtils.createMockJwtWithRoleLibrarian;
 
 import org.junit.jupiter.api.Test;
+import org.kergru.library.model.PageResponseDto;
+import org.kergru.library.model.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
@@ -32,10 +35,12 @@ public class LibraryAdminControllerIT {
         .uri("/library/ui/admin/users")
         .exchange()
         .expectStatus().isOk()
-        .expectBody(String.class)
-        .value(body -> assertThat(body).contains("demo_user_1"))
-        .value(body -> assertThat(body).contains("demo_user_2"))
-        .value(body -> assertThat(body).contains("demo_user_3"));
+        .expectBody(new ParameterizedTypeReference<PageResponseDto<UserDto>>() {})
+        .value(response -> {
+          assertThat(response).isNotNull();
+          assertThat(response.content()).isNotEmpty();
+          assertThat(response.content().getFirst().userName()).isEqualTo("demo_user_1");
+        });
   }
 
   @Test
@@ -58,8 +63,10 @@ public class LibraryAdminControllerIT {
         .uri("/library/ui/admin/users/demo_user_1") //protected route without role librarian
         .exchange()
         .expectStatus().isOk()
-        .expectBody(String.class)
-        .value(body -> assertThat(body).contains("demo_user_1"));
+        .expectBody(UserDto.class)
+        .value(user -> {
+          assertThat(user.userName()).isEqualTo("demo_user_1");
+        });
   }
 
   @Test

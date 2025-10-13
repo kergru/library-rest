@@ -13,7 +13,7 @@ USE library;
 -- users
 CREATE TABLE users
 (
-    id        BIGINT       NOT NULL,
+    id        BIGINT       NOT NULL AUTO_INCREMENT,
     username  VARCHAR(100) NOT NULL,
     firstname VARCHAR(100) NOT NULL,
     lastname  VARCHAR(100) NOT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE users
 -- books
 CREATE TABLE books
 (
-    id           BIGINT       NOT NULL,
+    id           BIGINT       NOT NULL AUTO_INCREMENT,
     isbn         VARCHAR(32)  NOT NULL,
     title        VARCHAR(255) NOT NULL,
     author       VARCHAR(255) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE books
 -- loans
 CREATE TABLE loans
 (
-    id          BIGINT       NOT NULL,
+    id          BIGINT       NOT NULL AUTO_INCREMENT,
     user_id     BIGINT       NOT NULL,
     book_id     BIGINT       NOT NULL,
     borrowed_at TIMESTAMP(6) NOT NULL,

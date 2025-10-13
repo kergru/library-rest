@@ -1,16 +1,11 @@
 package org.kergru.library.loans.repository;
 
-import java.util.List;
 import org.springframework.data.r2dbc.repository.Query;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 public interface LoanRepository extends ReactiveCrudRepository<LoanEntity, Long> {
-
-  Mono<LoanEntity> findByBookId(Long bookId);
-
-  Flux<LoanEntity> findByBookIdIn(List<Long> bookIds);
 
   @Query("""
         SELECT
@@ -32,4 +27,6 @@ public interface LoanRepository extends ReactiveCrudRepository<LoanEntity, Long>
         WHERE l.user_id = :userId
       """)
   Flux<LoanWithBookProjection> findByUserIdWithBook(Long userId);
+
+  Mono<Boolean> existsByBookIdAndReturnedAtIsNull(Long bookId);
 }
