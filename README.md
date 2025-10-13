@@ -85,9 +85,9 @@ flowchart BT
 ```mermaid
 sequenceDiagram
 participant A as Angular SPA
-participant F as Frontend Service (Spring WebFlux)
+participant F as Library Frontend Service
 participant K as Keycloak
-participant B as Backend Service
+participant B as Library Backend Service
 
     rect rgb(240, 248, 255)
     note over A: 1. User Login
