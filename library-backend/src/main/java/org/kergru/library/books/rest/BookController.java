@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/library/api")
+@RequestMapping("/library/books")
 public class BookController {
 
   private final BookService bookService;
@@ -27,7 +27,7 @@ public class BookController {
    * Returns paged search result of books by title, author, isbn
    */
   @PreAuthorize("isAuthenticated()")
-  @GetMapping("/books")
+  @GetMapping()
   public Mono<PageResponseDto<BookDto>> searchBooks(
       @RequestParam(required = false) String searchString,
       @RequestParam(defaultValue = "0") int page,
@@ -41,7 +41,7 @@ public class BookController {
    * Returns a single book by ISBN
    */
   @PreAuthorize("isAuthenticated()")
-  @GetMapping("/books/{isbn}")
+  @GetMapping("/{isbn}")
   public Mono<BookDto> getBook(@PathVariable String isbn) {
     return bookService.findByIsbn(isbn)
         .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found")));

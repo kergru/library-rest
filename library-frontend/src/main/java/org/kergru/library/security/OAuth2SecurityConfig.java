@@ -44,7 +44,7 @@ public class OAuth2SecurityConfig {
         .addFilterAfter(jwtLoggingFilter, SecurityWebFiltersOrder.AUTHENTICATION)
         .authorizeExchange(exchanges -> exchanges
             .pathMatchers("/actuator/**").permitAll()
-            .pathMatchers("/library/ui/admin/**").hasAuthority("ROLE_LIBRARIAN")
+            .pathMatchers("/library/api/users/**").hasAuthority("ROLE_LIBRARIAN")
             .anyExchange().authenticated()
         )
         .oauth2ResourceServer(oauth2 -> oauth2

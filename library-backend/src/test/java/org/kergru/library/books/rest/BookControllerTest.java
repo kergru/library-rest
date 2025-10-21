@@ -77,7 +77,7 @@ public class BookControllerTest {
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
-        .uri("/library/api/books/9780132350884")
+        .uri("/library/books/9780132350884")
         .exchange()
         .expectStatus().isOk()
         .expectBody(BookDto.class)
@@ -99,7 +99,7 @@ public class BookControllerTest {
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
-        .uri("/library/api/books/9780132350884")
+        .uri("/library/books/9780132350884")
         .exchange()
         .expectStatus().isOk()
         .expectBody(BookDto.class)
@@ -118,7 +118,7 @@ public class BookControllerTest {
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
-        .uri("/library/api/books?searchString=Clean Code")
+        .uri("/library/books?searchString=Clean Code")
         .exchange()
         .expectStatus().isOk()
         .expectBody(new ParameterizedTypeReference<PageResponseDto<BookDto>>() {})

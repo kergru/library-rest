@@ -34,7 +34,7 @@ public class LibraryBackendClient {
     return webClient.get()
         .uri(uriBuilder -> {
           var builder = uriBuilder
-              .path("/library/api/books")
+              .path("/library/books")
               .queryParam("page", page)
               .queryParam("size", size)
               .queryParam("sort", sortBy);
@@ -56,7 +56,7 @@ public class LibraryBackendClient {
    */
   public Mono<BookDto> getBookByIsbn(String isbn) {
     return webClient.get()
-        .uri("/library/api/books/{isbn}", isbn)
+        .uri("/library/books/{isbn}", isbn)
         .retrieve()
         .onStatus(s -> s.value() == 404, resp -> reactor.core.publisher.Mono.empty())
         .onStatus(s -> s.is4xxClientError() || s.is5xxServerError(),
@@ -71,7 +71,7 @@ public class LibraryBackendClient {
     return webClient.get()
         .uri(uriBuilder -> {
           var builder = uriBuilder
-              .path("/library/api/users")
+              .path("/library/users")
               .queryParam("page", page)
               .queryParam("size", size)
               .queryParam("sort", sortBy);
@@ -93,7 +93,7 @@ public class LibraryBackendClient {
    */
   public Mono<UserDto> getUser(String userName) {
     return webClient.get()
-        .uri("/library/api/users/{userName}", userName)
+        .uri("/library/users/{userName}", userName)
         .retrieve()
         .onStatus(s -> s.value() == 404, resp -> reactor.core.publisher.Mono.empty())
         .onStatus(s -> s.is4xxClientError() || s.is5xxServerError(),
@@ -106,7 +106,7 @@ public class LibraryBackendClient {
    */
   public Flux<LoanDto> getBorrowedBooksOfUser(String userName) {
     return webClient.get()
-        .uri("/library/api/users/{userName}/loans", userName)
+        .uri("/library/users/{userName}/loans", userName)
         .retrieve()
         .onStatus(s -> s.value() == 404, resp -> reactor.core.publisher.Mono.empty())
         .onStatus(s -> s.is4xxClientError() || s.is5xxServerError(),
@@ -116,7 +116,7 @@ public class LibraryBackendClient {
 
   public Mono<LoanDto> borrowBook(String isbn, String userName) {
     return webClient.post()
-        .uri("/library/api/users/{userName}/loans", userName)
+        .uri("/library/users/{userName}/loans", userName)
         .body(Mono.just(isbn), String.class)
         .retrieve()
         .onStatus(s -> s.value() == 409, resp -> Mono.error(new BookAlreadyBorrowedException(isbn)))
@@ -128,7 +128,7 @@ public class LibraryBackendClient {
   public Mono<Void> returnBook(Long loanId, String userName) {
     return webClient
         .delete()
-        .uri("/library/api/users/{userName}/loans/{loanId}", userName, loanId)
+        .uri("/library/users/{userName}/loans/{loanId}", userName, loanId)
         .retrieve()
         .onStatus(s -> s.value() == 404, resp -> reactor.core.publisher.Mono.empty())
         .onStatus(s -> s.is4xxClientError() || s.is5xxServerError(),

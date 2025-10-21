@@ -17,14 +17,11 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.projectreactor:reactor-test'
     testImplementation 'org.springframework.security:spring-security-test'
-
-    // JUnit 5
-    testImplementation 'org.junit.jupiter:junit-jupiter-api'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-
     // WireMock
     testImplementation "org.springframework.cloud:spring-cloud-contract-wiremock"
 
+
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 }
 

@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "DELETE",
-    "url": "/library/api/users/demo_user_1/loans/1"
+    "url": "/library/users/demo_user_1/loans/1"
   },
   "response": {
     "status": 200

@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "POST",
-    "url": "/library/api/users/demo_user_1/loans",
+    "url": "/library/users/demo_user_1/loans",
     "bodyPatterns": [
       { "equalTo": "success-isbn" }
     ]

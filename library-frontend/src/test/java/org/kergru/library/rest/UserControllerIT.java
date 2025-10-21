@@ -1,4 +1,4 @@
-package org.kergru.library.web;
+package org.kergru.library.rest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.kergru.library.util.JwtTestUtils.createMockJwt;
@@ -15,13 +15,13 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 /**
- * Integration test for the {@link LibraryAdminController}. KeyCloak is mocked using mockJwt(), no KeyCloak container required Library Backend is mocked using WireMock Webclient is
+ * Integration test for the {@link UserController}. KeyCloak is mocked using mockJwt(), no KeyCloak container required Library Backend is mocked using WireMock Webclient is
  * configured to use a mock JWT
  */
 @AutoConfigureWebTestClient
 @AutoConfigureWireMock(port = 8081)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class LibraryAdminControllerIT {
+public class UserControllerIT {
 
   @Autowired
   private WebTestClient webTestClient;
@@ -32,7 +32,7 @@ public class LibraryAdminControllerIT {
     webTestClient
         .mutateWith(createMockJwtWithRoleLibrarian("librarian"))
         .get()
-        .uri("/library/ui/admin/users")
+        .uri("/library/api/users")
         .exchange()
         .expectStatus().isOk()
         .expectBody(new ParameterizedTypeReference<PageResponseDto<UserDto>>() {})
@@ -49,7 +49,7 @@ public class LibraryAdminControllerIT {
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
-        .uri("/library/ui/admin/users") //protected route without role librarian
+        .uri("/library/api/users") //protected route without role librarian
         .exchange()
         .expectStatus().isForbidden();
   }
@@ -60,7 +60,7 @@ public class LibraryAdminControllerIT {
     webTestClient
         .mutateWith(createMockJwtWithRoleLibrarian("librarian"))
         .get()
-        .uri("/library/ui/admin/users/demo_user_1") //protected route without role librarian
+        .uri("/library/api/users/demo_user_1") //protected route without role librarian
         .exchange()
         .expectStatus().isOk()
         .expectBody(UserDto.class)
@@ -75,7 +75,7 @@ public class LibraryAdminControllerIT {
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
-        .uri("/library/ui/admin/users/demo_user_2")
+        .uri("/library/api/users/demo_user_2")
         .exchange()
         .expectStatus().isForbidden();
   }

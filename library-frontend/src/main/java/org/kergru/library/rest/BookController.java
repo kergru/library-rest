@@ -1,7 +1,7 @@
-package org.kergru.library.web;
+package org.kergru.library.rest;
 
+import org.kergru.library.model.BookDto;
 import org.kergru.library.model.PageResponseDto;
-import org.kergru.library.model.UserDto;
 import org.kergru.library.service.LibraryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,29 +13,29 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/library/ui/admin")
-public class LibraryAdminController {
+@RequestMapping("/library/api/books")
+public class BookController {
 
   private final LibraryService libraryService;
 
-  public LibraryAdminController(LibraryService libraryService) {
+  public BookController(LibraryService libraryService) {
     this.libraryService = libraryService;
   }
 
-  @GetMapping("/users")
-  public Mono<PageResponseDto<UserDto>> searchUsers(
+  @GetMapping()
+  public Mono<PageResponseDto<BookDto>> searchBooks(
       @RequestParam(required = false) String searchString,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "10") int size,
-      @RequestParam(defaultValue = "firstName") String sortBy
+      @RequestParam(defaultValue = "title") String sortBy
   ) {
-    return libraryService.searchUsers(searchString, page, size, sortBy);
+    return libraryService.searchBooks(searchString, page, size, sortBy);
   }
 
-  @GetMapping("/users/{userName}")
-  public Mono<UserDto> getUser(@PathVariable String userName) {
+  @GetMapping("/{isbn}")
+  public Mono<BookDto> getBook(@PathVariable String isbn) {
 
-    return libraryService.getUserWithLoans(userName)
-        .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")));
+    return libraryService.getBookByIsbn(isbn)
+        .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "Book not found")));
   }
 }

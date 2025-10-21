@@ -20,7 +20,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @RestController
-@RequestMapping("/library/api")
+@RequestMapping("/library/users")
 public class UserController {
 
   private final UserService userService;
@@ -35,7 +35,7 @@ public class UserController {
   /**
    * Returns paged search result of users by userName, firstName, lastName, email
    */
-  @GetMapping("/users")
+  @GetMapping()
   @PreAuthorize("hasRole('LIBRARIAN')")
   public Mono<PageResponseDto<UserDto>> searchUsers(
       @RequestParam(required = false) String searchString,
@@ -48,7 +48,7 @@ public class UserController {
   /**
    * Returns user profile by userName, only accessible by the librarian or the user himself
    */
-  @GetMapping("/users/{userName}")
+  @GetMapping("/{userName}")
   @PreAuthorize("hasRole('LIBRARIAN') or #userName == authentication.principal.claims['preferred_username']")
   public Mono<UserDto> getUser(@PathVariable String userName) {
 
@@ -60,7 +60,7 @@ public class UserController {
    * All borrowed books by a user, only accessible by the librarian or the user himself
    */
   @PreAuthorize("hasRole('LIBRARIAN') or #userName == authentication.principal.claims['preferred_username']")
-  @GetMapping("/users/{userName}/loans")
+  @GetMapping("/{userName}/loans")
   public Flux<LoanDto> getBorrowedBooksByUser(@PathVariable String userName) {
 
     return loanService.getBorrowedBooksByUser(userName)
@@ -71,7 +71,7 @@ public class UserController {
    * If the book is already borrowed, a 409 Conflict is returned.
    */
   @PreAuthorize("#userName == authentication.principal.claims['preferred_username']")
-  @PostMapping("/users/{userName}/loans")
+  @PostMapping("/{userName}/loans")
   public Mono<LoanDto> borrowBook(@PathVariable String userName, @RequestBody String isbn) {
 
       return loanService.borrowBook(isbn, userName)
@@ -83,7 +83,7 @@ public class UserController {
    * If no loan with id found or loan not borrowed by user, a 404 NotFound is returned.
    */
   @PreAuthorize("#userName == authentication.principal.claims['preferred_username']")
-  @DeleteMapping("/users/{userName}/loans/{loanId}")
+  @DeleteMapping("/{userName}/loans/{loanId}")
   public Mono<Void> returnBook(@PathVariable String userName, @PathVariable long loanId) {
 
     return loanService.returnBook(loanId, userName)

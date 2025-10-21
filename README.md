@@ -14,30 +14,16 @@ An external Angular SPA (library-client-spa) authenticates users and calls the l
 
 ## Components Overview
 
-| Layer                                                     | Component                           | Purpose                                                                                                 |
-|-----------------------------------------------------------|-------------------------------------|---------------------------------------------------------------------------------------------------------|
-| **Frontend (`library-frontend`)**                         | Spring Boot WebFlux Resource Server | Validates JWTs from the Angular SPA and forwards requests to the backend using `WebClient`              |
-|                                                           | Reactive REST Controllers           | Exposes public JSON APIs (e.g. `/api/books`, `/api/users`)                                              |
-|                                                           | WebClient (Reactive)                | Calls `library-backend` with the original Bearer Token                                                  |
-| **Backend (`library-backend`)**                           | Spring Boot WebFlux Resource Server | Validates JWTs reactively via the JWKS endpoint from Keycloak                                           |
-|                                                           | Reactive REST APIs                  | Provides data and business logic (e.g. `/api/books`, `/api/authors`)                                    |
-| **Authorization Server <br/>(Keycloak Docker Container)** | `/token`, `/.well-known/jwks.json`  | Issues JWT access tokens, exposes JWKS for signature verification                                       |
-| **Database** <br/>(MySQL Docker Container)                | MySQL                               | Stores Keycloak and Library data                                                                        |~~
+| Layer                                                     | Component                           | Purpose                                                                                               |
+|-----------------------------------------------------------|-------------------------------------|-------------------------------------------------------------------------------------------------------|
+| **Frontend (`library-frontend`)**                         | Spring Boot WebFlux Resource Server | Validates JWTs from the Angular SPA and forwards requests to the backend using `WebClient`            |
+|                                                           | Reactive REST APIs                  | Exposes public JSON APIs (e.g. `/library/api/books`, `/library/api/users`)                            |
+|                                                           | WebClient (Reactive)                | Calls `library-backend` with the original Bearer Token                                                |
+| **Backend (`library-backend`)**                           | Spring Boot WebFlux Resource Server | Validates JWTs reactively via the JWKS endpoint from Keycloak                                         |
+|                                                           | Reactive REST APIs                  | Provides data and business logic (e.g. `/library/books`, `/library/authors`)                    |
+| **Authorization Server <br/>(Keycloak Docker Container)** | `/token`, `/.well-known/jwks.json`  | Issues JWT access tokens, exposes JWKS for signature verification                                     |
+| **Database** <br/>(MySQL Docker Container)                | MySQL                               | Stores Keycloak and Library data                                                                      |~~
 | **Client (Browser)**                                      | Webclient SPA (OIDC Client)         | Handles login via Authorization Code Flow (PKCE), stores tokens in browser, and calls the resource APIs |
-
-## Core Spring Components per Module
-
-| Module               | Area                    | Key Classes / Beans                                                                          | Purpose                                              |
-|----------------------|-------------------------|----------------------------------------------------------------------------------------------|------------------------------------------------------|
-| **library-frontend** | **Security (Reactive)** | `SecurityWebFilterChain` with `.oauth2ResourceServer().jwt()`, `ReactiveJwtDecoder` (Nimbus) | Validates JWTs sent from the Angular SPA             |
-|                      | **Web / REST API**      | `@RestController`, returning `Mono<ResponseEntity<?>>` with JSON only                        | Handles REST endpoints and forwards calls to backend |
-|                      | **Service / WebClient** | `WebClient` configured with `ExchangeFilterFunction` for bearer propagation                  | Forwards requests and tokens to `library-backend`    |
-|                      | **Configuration**       | `spring.security.oauth2.resourceserver.jwt.jwk-set-uri` in `application.yml`                 | Configures JWKS endpoint for token validation        |
-| **library-backend**  | **Security (Reactive)** | Same as `library-frontend`: `SecurityWebFilterChain` + `ReactiveJwtDecoder`                  | Validates tokens reactively                          |
-|                      | **Web / REST API**      | `@RestController`, JSON only                                                                 | Exposes protected REST endpoints                     |
-|                      | **Data Layer**          | `ReactiveCrudRepository`, `@Service`                                                         | Reactive persistence via R2DBC                       |
-
-
 
 ## Architecture Diagram
 

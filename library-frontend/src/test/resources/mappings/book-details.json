@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/library/api/books/12345"
+    "url": "/library/books/12345"
   },
   "response": {
     "status": 200,

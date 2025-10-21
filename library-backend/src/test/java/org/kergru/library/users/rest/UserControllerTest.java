@@ -61,7 +61,7 @@ public class UserControllerTest {
     webTestClient
         .mutateWith(createMockJwtWithRoleLibrarian("librarian"))
         .get()
-        .uri("/library/api/users/demo_user_1")
+        .uri("/library/users/demo_user_1")
         .exchange()
         .expectStatus().isOk()
         .expectBody(UserDto.class)
@@ -77,7 +77,7 @@ public class UserControllerTest {
     webTestClient
         .mutateWith(createMockJwtWithRoleLibrarian("librarian"))
         .get()
-        .uri("/library/api/users/UNKNOWN_USER")
+        .uri("/library/users/UNKNOWN_USER")
         .exchange()
         .expectStatus().isNotFound();
   }
@@ -88,7 +88,7 @@ public class UserControllerTest {
     webTestClient
         .mutateWith(createMockJwtWithRoleLibrarian("librarian"))
         .get()
-        .uri("/library/api/users?searchString=demo_user_1&page=0&size=10&sortBy=userName")
+        .uri("/library/users?searchString=demo_user_1&page=0&size=10&sortBy=userName")
         .exchange()
         .expectStatus().isOk()
         .expectBody(new ParameterizedTypeReference<PageResponseDto<UserDto>>() {})
@@ -105,7 +105,7 @@ public class UserControllerTest {
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
-        .uri("/library/api/users/demo_user_1")
+        .uri("/library/users/demo_user_1")
         .exchange()
         .expectStatus().isOk()
         .expectBody(UserDto.class)
@@ -121,7 +121,7 @@ public class UserControllerTest {
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
-        .uri("/library/api/users/demo_user_2")
+        .uri("/library/users/demo_user_2")
         .exchange()
         .expectStatus().isForbidden();
   }
@@ -132,7 +132,7 @@ public class UserControllerTest {
     webTestClient
         .mutateWith(createMockJwt("demo_user_1"))
         .get()
-        .uri("/library/api/users?searchString=demo_user_1&page=0&size=10&sortBy=userName")
+        .uri("/library/users?searchString=demo_user_1&page=0&size=10&sortBy=userName")
         .exchange()
         .expectStatus().isForbidden();
   }

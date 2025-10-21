@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/library/api/users?page=0&size=10&sort=firstName"
+    "url": "/library/users?page=0&size=10&sort=firstName"
   },
   "response": {
     "status": 200,

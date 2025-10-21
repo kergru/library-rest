@@ -1,0 +1,41 @@
+package org.kergru.library.rest;
+
+import org.kergru.library.model.PageResponseDto;
+import org.kergru.library.model.UserDto;
+import org.kergru.library.service.LibraryService;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+import reactor.core.publisher.Mono;
+
+@RestController
+@RequestMapping("/library/api/users")
+public class UserController {
+
+  private final LibraryService libraryService;
+
+  public UserController(LibraryService libraryService) {
+    this.libraryService = libraryService;
+  }
+
+  @GetMapping()
+  public Mono<PageResponseDto<UserDto>> searchUsers(
+      @RequestParam(required = false) String searchString,
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "10") int size,
+      @RequestParam(defaultValue = "firstName") String sortBy
+  ) {
+    return libraryService.searchUsers(searchString, page, size, sortBy);
+  }
+
+  @GetMapping("/{userName}")
+  public Mono<UserDto> getUser(@PathVariable String userName) {
+
+    return libraryService.getUserWithLoans(userName)
+        .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found")));
+  }
+}
